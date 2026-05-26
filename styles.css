@@ -97,6 +97,29 @@ button {
   cursor: pointer;
 }
 
+button:hover {
+  opacity: 0.9;
+}
+
+.secundario {
+  display: none;
+  background: #607d8b;
+}
+
+.error {
+  min-height: 18px;
+  margin: 10px 0 0;
+  color: #e22b24;
+  font-size: 14px;
+}
+
+.filtros {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 14px;
+  margin-bottom: 22px;
+}
+
 .item {
   display: flex;
   justify-content: space-between;
@@ -135,13 +158,31 @@ button {
 .acciones button {
   width: auto;
   margin: 0;
+}
+
+.acciones .editar {
+  background: #169c50;
+}
+
+.acciones .eliminar {
   background: #e22b24;
+}
+
+.vacio {
+  padding: 18px;
+  border: 1px dashed #c8d4db;
+  border-radius: 8px;
+  color: #607d8b;
 }
 
 @media (max-width: 800px) {
   .totales,
   .contenido {
     display: block;
+  }
+
+  .filtros {
+    grid-template-columns: 1fr;
   }
 
   .caja,

@@ -1,4 +1,5 @@
 let transacciones = [];
+let indiceEditando = null;
 
 const formulario = document.getElementById("formulario");
 const lista = document.getElementById("lista");
@@ -7,6 +8,15 @@ const ingresos = document.getElementById("ingresos");
 const gastos = document.getElementById("gastos");
 const tipo = document.getElementById("tipo");
 const categoria = document.getElementById("categoria");
+const tituloFormulario = document.getElementById("tituloFormulario");
+const botonGuardar = document.getElementById("botonGuardar");
+const botonCancelar = document.getElementById("botonCancelar");
+const mensajeError = document.getElementById("mensajeError");
+
+const filtroTipo = document.getElementById("filtroTipo");
+const filtroCategoria = document.getElementById("filtroCategoria");
+const filtroMes = document.getElementById("filtroMes");
+const buscar = document.getElementById("buscar");
 
 const categorias = {
   ingreso: ["Salario", "Ventas", "Otros"],
@@ -14,21 +24,41 @@ const categorias = {
 };
 
 tipo.addEventListener("change", cargarCategorias);
+formulario.addEventListener("submit", guardarTransaccion);
+botonCancelar.addEventListener("click", cancelarEdicion);
+filtroTipo.addEventListener("change", mostrarTransacciones);
+filtroCategoria.addEventListener("change", mostrarTransacciones);
+filtroMes.addEventListener("input", mostrarTransacciones);
+buscar.addEventListener("input", mostrarTransacciones);
+
 cargarCategorias();
+cargarFiltroCategorias();
+mostrarTransacciones();
 
-formulario.addEventListener("submit", function (evento) {
+function guardarTransaccion(evento) {
   evento.preventDefault();
+  mensajeError.textContent = "";
 
-  const descripcion = document.getElementById("descripcion").value;
+  const descripcion = document.getElementById("descripcion").value.trim();
   const monto = Number(document.getElementById("monto").value);
   const fecha = document.getElementById("fecha").value;
 
-  if (descripcion === "" || monto <= 0 || fecha === "") {
-    alert("Completa la descripcion, la fecha y un monto mayor a 0.");
+  if (descripcion === "") {
+    mensajeError.textContent = "La descripcion es obligatoria.";
     return;
   }
 
-  const nueva = {
+  if (monto <= 0) {
+    mensajeError.textContent = "El monto debe ser mayor a 0.";
+    return;
+  }
+
+  if (fecha === "" || isNaN(new Date(fecha).getTime())) {
+    mensajeError.textContent = "La fecha debe ser valida.";
+    return;
+  }
+
+  const transaccion = {
     descripcion: descripcion,
     monto: monto,
     fecha: fecha,
@@ -36,11 +66,16 @@ formulario.addEventListener("submit", function (evento) {
     categoria: categoria.value
   };
 
-  transacciones.push(nueva);
-  formulario.reset();
-  cargarCategorias();
+  if (indiceEditando === null) {
+    transacciones.push(transaccion);
+  } else {
+    transacciones[indiceEditando] = transaccion;
+  }
+
+  cancelarEdicion();
+  cargarFiltroCategorias();
   mostrarTransacciones();
-});
+}
 
 function cargarCategorias() {
   categoria.innerHTML = "";
@@ -50,10 +85,37 @@ function cargarCategorias() {
   });
 }
 
+function cargarFiltroCategorias() {
+  filtroCategoria.innerHTML = `<option value="todas">Todas</option>`;
+
+  Object.values(categorias).flat().forEach(function (nombre) {
+    if (!filtroCategoria.innerHTML.includes(`>${nombre}<`)) {
+      filtroCategoria.innerHTML += `<option value="${nombre}">${nombre}</option>`;
+    }
+  });
+}
+
 function mostrarTransacciones() {
   lista.innerHTML = "";
 
-  transacciones.forEach(function (item, indice) {
+  const filtradas = transacciones.filter(function (item) {
+    const mes = item.fecha.slice(0, 7);
+    const texto = buscar.value.toLowerCase();
+
+    return (
+      (filtroTipo.value === "todos" || item.tipo === filtroTipo.value) &&
+      (filtroCategoria.value === "todas" || item.categoria === filtroCategoria.value) &&
+      (filtroMes.value === "" || mes === filtroMes.value) &&
+      item.descripcion.toLowerCase().includes(texto)
+    );
+  });
+
+  if (filtradas.length === 0) {
+    lista.innerHTML = `<div class="vacio">No hay transacciones para mostrar.</div>`;
+  }
+
+  filtradas.forEach(function (item) {
+    const indice = transacciones.indexOf(item);
     const signo = item.tipo === "ingreso" ? "+$" : "-$";
 
     lista.innerHTML += `
@@ -64,22 +126,51 @@ function mostrarTransacciones() {
         </div>
         <div class="acciones">
           <span class="monto">${signo}${item.monto}</span>
-          <button onclick="eliminarTransaccion(${indice})">X</button>
+          <button class="editar" onclick="editarTransaccion(${indice})">Editar</button>
+          <button class="eliminar" onclick="eliminarTransaccion(${indice})">X</button>
         </div>
       </div>
     `;
   });
 
-calcularResumen();
+  calcularResumen();
 }
 
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
+function editarTransaccion(indice) {
+  const item = transacciones[indice];
+
+  document.getElementById("descripcion").value = item.descripcion;
+  document.getElementById("monto").value = item.monto;
+  document.getElementById("fecha").value = item.fecha;
+  tipo.value = item.tipo;
+  cargarCategorias();
+  categoria.value = item.categoria;
+
+  indiceEditando = indice;
+  tituloFormulario.textContent = "Editar transaccion";
+  botonGuardar.textContent = "Guardar cambios";
+  botonCancelar.style.display = "block";
 }
 
 function eliminarTransaccion(indice) {
-  transacciones.splice(indice, 1);
-  mostrarTransacciones();
+  const confirmar = confirm("Deseas eliminar esta transaccion?");
+
+  if (confirmar) {
+    transacciones.splice(indice, 1);
+    cancelarEdicion();
+    cargarFiltroCategorias();
+    mostrarTransacciones();
+  }
+}
+
+function cancelarEdicion() {
+  formulario.reset();
+  cargarCategorias();
+  indiceEditando = null;
+  tituloFormulario.textContent = "Agregar transaccion";
+  botonGuardar.textContent = "Agregar";
+  botonCancelar.style.display = "none";
+  mensajeError.textContent = "";
 }
 
 function calcularResumen() {
@@ -97,4 +188,8 @@ function calcularResumen() {
   ingresos.textContent = "$" + totalIngresos;
   gastos.textContent = "$" + totalGastos;
   balance.textContent = "$" + (totalIngresos - totalGastos);
+}
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
 }

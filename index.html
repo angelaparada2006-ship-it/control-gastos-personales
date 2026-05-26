@@ -24,13 +24,13 @@
 
     <section class="contenido">
       <form id="formulario" class="tarjeta">
-        <h2>Agregar transaccion</h2>
+        <h2 id="tituloFormulario">Agregar transaccion</h2>
 
         <label>Descripcion</label>
         <input id="descripcion" type="text" required>
 
         <label>Monto</label>
-        <input id="monto" type="number" required>
+        <input id="monto" type="number" min="1" required>
 
         <label>Fecha</label>
         <input id="fecha" type="date" required>
@@ -44,11 +44,34 @@
         <label>Categoria</label>
         <select id="categoria"></select>
 
-        <button type="submit">Agregar</button>
+        <p id="mensajeError" class="error"></p>
+        <button id="botonGuardar" type="submit">Agregar</button>
+        <button id="botonCancelar" class="secundario" type="button">Cancelar edicion</button>
       </form>
 
       <section class="tarjeta">
         <h2>Transacciones</h2>
+
+        <div class="filtros">
+          <label>Tipo</label>
+          <select id="filtroTipo">
+            <option value="todos">Todos</option>
+            <option value="ingreso">Ingresos</option>
+            <option value="gasto">Gastos</option>
+          </select>
+
+          <label>Categoria</label>
+          <select id="filtroCategoria">
+            <option value="todas">Todas</option>
+          </select>
+
+          <label>Mes</label>
+          <input id="filtroMes" type="month">
+
+          <label>Buscar</label>
+          <input id="buscar" type="text" placeholder="Buscar por descripcion">
+        </div>
+
         <div id="lista"></div>
       </section>
     </section>
