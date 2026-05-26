@@ -1,0 +1,151 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #263238;
+  background: #f3f6f8;
+}
+
+.contenedor {
+  width: 90%;
+  max-width: 1080px;
+  margin: 40px auto;
+}
+
+.resumen,
+.tarjeta {
+  background: white;
+  border: 1px solid #d6e0e6;
+  border-radius: 12px;
+  padding: 28px;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  font-size: 36px;
+  margin-bottom: 6px;
+}
+
+p {
+  color: #607d8b;
+  font-size: 20px;
+}
+
+.totales {
+  display: flex;
+  gap: 34px;
+}
+
+.caja {
+  flex: 1;
+  padding: 10px 16px;
+  border: 3px solid #263238;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.caja strong {
+  margin-left: 20px;
+  font-size: 22px;
+}
+
+.ingreso {
+  border-color: #169c50;
+  color: #169c50;
+}
+
+.gasto {
+  border-color: #e22b24;
+  color: #e22b24;
+}
+
+.contenido {
+  display: grid;
+  grid-template-columns: 440px 1fr;
+  gap: 30px;
+  margin-top: 24px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+}
+
+input,
+select,
+button {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #c8d4db;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+button {
+  margin-top: 12px;
+  color: white;
+  background: #263238;
+  border: none;
+  cursor: pointer;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 14px;
+  border: 1px solid #ddd;
+  border-left: 8px solid #169c50;
+  border-radius: 8px;
+}
+
+.item.gasto {
+  border-left-color: #e22b24;
+}
+
+.item h3 {
+  margin: 0;
+}
+
+.item p {
+  margin: 4px 0 0;
+  font-size: 15px;
+}
+
+.monto {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.acciones {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.acciones button {
+  width: auto;
+  margin: 0;
+  background: #e22b24;
+}
+
+@media (max-width: 800px) {
+  .totales,
+  .contenido {
+    display: block;
+  }
+
+  .caja,
+  .tarjeta {
+    margin-bottom: 16px;
+  }
+}

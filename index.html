@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#263238">
+  <title>Control de gastos personales</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="contenedor">
+    <section class="resumen">
+      <h1>Control de gastos personales</h1>
+      <p>Resumen mensual de ingresos, gastos y balance</p>
+
+      <div class="totales">
+        <div class="caja balance">Balance: <strong id="balance">$0</strong></div>
+        <div class="caja ingreso">Ingresos: <strong id="ingresos">$0</strong></div>
+        <div class="caja gasto">Gastos: <strong id="gastos">$0</strong></div>
+      </div>
+    </section>
+
+    <section class="contenido">
+      <form id="formulario" class="tarjeta">
+        <h2>Agregar transaccion</h2>
+
+        <label>Descripcion</label>
+        <input id="descripcion" type="text" required>
+
+        <label>Monto</label>
+        <input id="monto" type="number" required>
+
+        <label>Fecha</label>
+        <input id="fecha" type="date" required>
+
+        <label>Tipo</label>
+        <select id="tipo">
+          <option value="ingreso">Ingreso</option>
+          <option value="gasto">Gasto</option>
+        </select>
+
+        <label>Categoria</label>
+        <select id="categoria"></select>
+
+        <button type="submit">Agregar</button>
+      </form>
+
+      <section class="tarjeta">
+        <h2>Transacciones</h2>
+        <div id="lista"></div>
+      </section>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
